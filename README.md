@@ -44,8 +44,8 @@ const BUTTON_STYLE: ink.TextStyle = {
 -- ...into the render loop...
 
 -- Components are plain functions, much like other libraries.
-const function button(scope: ink.Scope, label: string, on_activated: () -> ())
-    local label = ink.text(label, BUTTON_STYLE)
+const function button(scope: ink.Scope, text: string, on_activated: () -> ())
+    local label = ink.text(text, BUTTON_STYLE)
 
     -- Ink's API members often return a new `Composite`, ie. they're immutable.
     -- Remember to assign the same composite with the same variable!
@@ -55,7 +55,7 @@ const function button(scope: ink.Scope, label: string, on_activated: () -> ())
     --
     -- It's worth noting, Ink always uses pixel values. You'll rarely see a
     -- `UDim`, if ever.
-    label = ink.pad_xy(content, 16, 12)
+    label = ink.pad_xy(label, 16, 12)
 
     -- Right now, this button only has text. Let's give it a solid color
     -- background!
@@ -67,7 +67,7 @@ const function button(scope: ink.Scope, label: string, on_activated: () -> ())
     --
     -- `scope:key` here defines an inner value, which the hotspot will use to
     -- store itself. You'll see this pattern a lot!
-    const hot, spot = ink.hotspot(scope, bg.bounds)
+    const hot, spot = ink.hotspot(scope:key("hotspot"), bg.bounds)
     if hot.clicked then
         on_activated()
     end
@@ -80,8 +80,8 @@ const function button(scope: ink.Scope, label: string, on_activated: () -> ())
     }
 
     const colors = BUTTON_COLORS[hot.state]
-    const bg_color = ink.tween(colors.bg, 0.3, Enum.EasingStyle.Quart)
-    const fg_color = ink.tween(colors.fg, 0.3, Enum.EasingStyle.Quart)
+    const bg_color = ink.tween(scope:key("bg_color"), colors.bg, 0.3, Enum.EasingStyle.Quart)
+    const fg_color = ink.tween(scope:key("fg_color"), colors.fg, 0.3, Enum.EasingStyle.Quart)
 
     -- Many function arguments in Ink have optional values.
     -- Here `tint` applies a color, but it can also apply transparency!
@@ -92,7 +92,7 @@ const function button(scope: ink.Scope, label: string, on_activated: () -> ())
     -- as one unit.
     --
     -- Order matters here! First composites are rendered first.
-    return ink.compose({ bg, label, region })
+    return ink.compose({ bg, label, spot })
 end
 
 -- Let's try rendering some layouts.
@@ -102,11 +102,11 @@ end
 --
 -- Ink might suprise you.
 
-const function ui(scope: Scope)
+const function render_ui(scope: ink.Scope)
     -- Layout functions often take an array of composites. Let's create some.
     const buttons = {}
     for index, action in { "Like", "Subscribe", "Notifications" } do
-        local btn = button(scope, label, function()
+        local btn = button(scope:key(action), action, function()
             print(action, "pressed")
         end)
 
@@ -139,17 +139,23 @@ end
 
 const scope = ink.scope.new()
 
--- The intent listens to an input source (here, UserInputService) and needs
+const screen_gui = Instance.new("ScreenGui")
+screen_gui.Parent = Players.LocalPlayer.PlayerGui
+
+const root = Instance.new("Frame")
+root.BackgroundTransparency = 1
+root.Size = UDim2.fromScale(1, 1)
+root.Parent = screen_gui
+
+-- The intent listens to an input source (here, `root`) and needs
 -- to know where your UI is on screen.
 --
 -- This callback converts a screen position into a position relative to `root`.
-const intent = ink.roblox_intent.new(UserInputService, function(position)
+const intent = ink.input_source_intent.new(root, function(position)
 	return position - root.AbsolutePosition
 end)
 
-const root = Instance.new("ScreenGui")
-root.Parent = Players.LocalPlayer.PlayerGui
-const renderer = ink.roblox_renderer.new(root)
+const renderer = ink.gui_object_renderer.new(root)
 
 -- Here, Ink is rendered every `PreRender`.
 -- You don't have to use RunService! Feel free to render every ECS phase or on
@@ -161,22 +167,22 @@ const render_loop = RunService.PreRender:Connect(function(dt)
 	-- Then, work out what the player did to the hotspots seen last frame.
 	ink.update_intent_state(intent.state, intent:take())
 
-    -- Now, compose your UI!
-    const composite = render_ui(scope)
+	-- Now, compose your UI!
+	const composite = render_ui(scope)
 
 	-- When updating your UI, hotspots may have been rearranged.
-    -- You'll need to "commit" the updated hotspots to your intents.
+	-- You'll need to "commit" the updated hotspots to your intents.
 	intent:commit(composite)
 
-    -- Now, finally, render it!
-    renderer:render_composite(composite)
+	-- Now, finally, render it!
+	renderer:render(composite)
 end)
 
 -- To clean up Ink:
 plugin.Unloading:Once(function()
-    render_loop:Disconnect()
-    intent:destroy()
-    renderer:destroy()
+	render_loop:Disconnect()
+	intent:destroy()
+	renderer:destroy()
 end)
 ```
 

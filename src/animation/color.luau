@@ -455,9 +455,7 @@ function color.readable(bg: Color3, dark: Color3?, light: Color3?): Color3
 	local d = dark or color.BLACK
 	local l = light or color.WHITE
 	local l_bg = color.luminance(bg)
-	return if color.contrast_luminance(l_bg, color.luminance(d))
-			>= color.contrast_luminance(l_bg, color.luminance(l))
-		then d
+	return if color.contrast_luminance(l_bg, color.luminance(d)) >= color.contrast_luminance(l_bg, color.luminance(l)) then d
 		else l
 end
 

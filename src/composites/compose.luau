@@ -1,12 +1,22 @@
-local types = require("../types")
 local union_rects = require("../rects/union_rects")
+local types = require("../types")
 
---- Combines composites into one, rendered first to last.
+--- Combines multiple composites into a single composite.
+--- Primitives are rendered in array order (first-to-last = back-to-front).
+--- Overall bounds default to the union of all child composite bounds unless overridden by `bounded_by`.
 const function compose(composed_of: { types.Composite }, bounded_by: Rect?): types.Composite
-	local out_primitives: { types.Primitive } = {}
-	local out_bounds: Rect?
+	local total = 0
 	for _, c in composed_of do
-		table.move(c.primitives, 1, #c.primitives, #out_primitives + 1, out_primitives)
+		total += #c.primitives
+	end
+
+	const out_primitives: { types.Primitive } = table.create(total)
+	local out_bounds: Rect?
+	local cursor = 1
+	for _, c in composed_of do
+		const count = #c.primitives
+		table.move(c.primitives, 1, count, cursor, out_primitives)
+		cursor += count
 		out_bounds = union_rects(out_bounds, c.bounds)
 	end
 	return {

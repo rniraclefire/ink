@@ -2,6 +2,10 @@ local intersect_rects = require("../rects/intersect_rects")
 local is_in_rect = require("../rects/is_in_rect")
 local types = require("../types")
 
+--- Evaluates pointer and interaction state across registered hotspots from the previous frame.
+--- Hit-testing evaluates hotspots in reverse render order (topmost/highest Z-index first)
+--- and intersects against any active clip bounds.
+--- Updates `hotspot.state` (Idle, Hover, Press), `hotspot.clicked`, `drag`, `pointer`, and `wheel`.
 const function update_intent_state(state: types.IntentState, intent: types.Intent)
 	for _, primitive in state.hotspots do
 		const hotspot = assert(primitive.hotspot, "Missing hotspot")

@@ -1,13 +1,8 @@
 local compose = require("../composites/compose")
-local translate = require("./translate")
 local types = require("../types")
+local translate = require("./translate")
 
-const function masonry(
-	composites: { types.Composite },
-	columns: number,
-	column_width: number,
-	gap: number
-): types.Composite
+const function masonry(composites: { types.Composite }, columns: number, column_width: number, gap: number): types.Composite
 	const heights = table.create(columns, 0)
 	const placed = table.create<<types.Composite>>(#composites)
 	for index, composite in composites do

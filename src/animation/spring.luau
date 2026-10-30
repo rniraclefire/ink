@@ -1,7 +1,7 @@
-const pack_types = require("./datatypes/pack_types")
-const spring_coefficients = require("./spring_coefficients")
 const types = require("../types")
+const pack_types = require("./datatypes/pack_types")
 const unpack_types = require("./datatypes/unpack_types")
+const spring_coefficients = require("./spring_coefficients")
 
 type State<T> = {
 	kind: string?,
@@ -19,10 +19,10 @@ const function new_state<T>(): State<T>
 end
 
 const function spring<T>(s: types.Scope, target: T, speed: number?, damping: number?): T
-	const state = s:once(new_state<<T>>)
+	const state = s:once(new_state) :: State<T>
 	const kind = typeof(target)
-	const pack, unpack = pack_types[kind], unpack_types[kind]
-	assert(pack and unpack, `Cannot spring a {kind}`)
+	const pack, unpack_value = pack_types[kind], unpack_types[kind]
+	assert(pack and unpack_value, `Cannot spring a {kind}`)
 
 	if state.kind ~= kind then
 		state.kind = kind
@@ -74,7 +74,7 @@ const function spring<T>(s: types.Scope, target: T, speed: number?, damping: num
 		return target
 	end
 
-	return unpack(position)
+	return unpack_value(position)
 end
 
 return spring

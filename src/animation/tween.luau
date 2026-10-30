@@ -1,7 +1,7 @@
 local TweenService = game:GetService("TweenService")
 
-local lerp_types = require("./datatypes/lerp_types")
 local scope = require("../runtime/scope")
+local lerp_types = require("./datatypes/lerp_types")
 
 export type State<T> = {
 	kind: string?,
@@ -28,7 +28,7 @@ const function tween<T>(
 	style: Enum.EasingStyle?,
 	direction: Enum.EasingDirection?
 ): T
-	const state = s:once(new_state<<T>>)
+	const state = s:once(new_state) :: State<T>
 	const now = s:time()
 	const kind = typeof(goal)
 	const lerp = lerp_types[kind] or error(`Cannot tween a {kind}`)

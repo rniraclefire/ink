@@ -8,17 +8,9 @@ export type Pack<T = unknown> = { [number]: T, n: number }
 
 -- Styling
 
-export type RoundStyle = {
-	tl: number?,
-	tr: number?,
-	bl: number?,
-	br: number?,
-}
+export type RoundStyle = { tl: number?, tr: number?, bl: number?, br: number? }
 
-export type TextStyle = {
-	size: number,
-	font: Enum.Font,
-}
+export type TextStyle = { size: number, font: Enum.Font }
 
 export type ImageStyle = {
 	scale_type: Enum.ScaleType?,
@@ -35,12 +27,10 @@ export type ImageStyle = {
 export type Primitive = {
 	bounds: Rect,
 	clip: Rect?,
-
 	color: Color3?,
 	transparency: number?,
 	round: RoundStyle?,
 	rotation: number?,
-
 	text: string?,
 	text_style: TextStyle?,
 	image: string?,
@@ -49,11 +39,7 @@ export type Primitive = {
 	hotspot_wheel: boolean?,
 }
 
-export type Composite = {
-	primitives: { Primitive },
-	bounds: Rect,
-	hitbox_scope: scope.Scope?,
-}
+export type Composite = { primitives: { Primitive }, bounds: Rect }
 
 -- Runtime
 
@@ -76,10 +62,7 @@ export type Intent = {
 	keys_pressed: { [Enum.KeyCode]: boolean },
 }
 
-export type IntentState = {
-	hotspots: { Primitive },
-	active: Hotspot?,
-}
+export type IntentState = { hotspots: { Primitive }, active: Hotspot? }
 
 export type Hotspot = {
 	state: Enum.GuiState,
@@ -90,9 +73,7 @@ export type Hotspot = {
 	bounds: Rect,
 }
 
-export type HotspotOptions = {
-	wheel: boolean?,
-}
+export type HotspotOptions = { wheel: boolean? }
 
 export type function ProcessControls(controls: type): type
 	const CONTROL_VALUE = types.singleton("ControlValue")

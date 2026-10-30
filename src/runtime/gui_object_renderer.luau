@@ -10,6 +10,10 @@ export type Renderer = setmetatable<{
 	root: Instance,
 }, typeof(gui_object_renderer)>
 
+const DEFAULT_TEXT_STYLE: types.TextStyle = { size = 0, font = Enum.Font.Arial }
+const DEFAULT_IMAGE_STYLE: types.ImageStyle = {}
+const EMPTY_RECT = Rect.new()
+
 function gui_object_renderer.new(root: Instance): Renderer
 	return setmetatable({ pools = {}, root = root }, gui_object_renderer)
 end
@@ -25,9 +29,12 @@ function gui_object_renderer.acquire<T>(self: Renderer, class_name: string, pool
 	local instance = pool.instances[pool.used]
 	if not instance then
 		instance = Instance.new(class_name)
+		if instance:IsA("GuiObject") then
+			instance.BorderSizePixel = 0
+		end
 		pool.instances[pool.used] = instance
 	end
-	return instance
+	return instance :: any
 end
 
 function gui_object_renderer.render(self: Renderer, composite: types.Composite)
@@ -47,7 +54,6 @@ function gui_object_renderer.render(self: Renderer, composite: types.Composite)
 			if current_clip then
 				const container = self:acquire<<Frame>>("Frame", "Clip")
 				container.BackgroundTransparency = 1
-				container.BorderSizePixel = 0
 				container.ClipsDescendants = true
 				container.Visible = true
 				container.Position = UDim2.fromOffset(current_clip.Min.X, current_clip.Min.Y)
@@ -64,40 +70,44 @@ function gui_object_renderer.render(self: Renderer, composite: types.Composite)
 			end
 		end
 
-		local instance
+		local instance: GuiObject
 		if primitive.text then
-			const style = primitive.text_style or {} :: types.TextStyle
-			instance = self:acquire<<TextLabel>>("TextLabel")
-			instance.BackgroundTransparency = 1
-			instance.Text = primitive.text
-			instance.TextSize = style.size or 0
-			instance.TextColor3 = primitive.color or color.BLACK
-			instance.TextTransparency = primitive.transparency or 0
-			instance.Font = style.font or Enum.Font.Arial
+			const style = primitive.text_style or DEFAULT_TEXT_STYLE
+			const label = self:acquire<<TextLabel>>("TextLabel")
+			label.BackgroundTransparency = 1
+			label.Text = primitive.text
+			label.TextSize = style.size or 0
+			label.TextColor3 = primitive.color or color.BLACK
+			label.TextTransparency = primitive.transparency or 0
+			label.Font = style.font or Enum.Font.Arial
+			instance = label
 		elseif primitive.image then
-			const style = primitive.image_style or {} :: types.ImageStyle
-			instance = self:acquire<<ImageLabel>>("ImageLabel")
-			instance.BackgroundTransparency = 1
-			instance.Image = primitive.image
-			instance.ImageColor3 = primitive.color or color.WHITE
-			instance.ImageTransparency = primitive.transparency or 0
-			instance.ImageRectOffset = style.rect_offset or Vector2.zero
-			instance.ImageRectSize = style.rect_size or Vector2.one
-			instance.ResampleMode = style.resample or Enum.ResamplerMode.Default
-			instance.ScaleType = style.scale_type or Enum.ScaleType.Stretch
-			instance.SliceCenter = style.slice_center or Rect.new()
-			instance.SliceScale = style.slice_scale or 0
+			const style = primitive.image_style or DEFAULT_IMAGE_STYLE
+			const img = self:acquire<<ImageLabel>>("ImageLabel")
+			img.BackgroundTransparency = 1
+			img.Image = primitive.image
+			img.ImageColor3 = primitive.color or color.WHITE
+			img.ImageTransparency = primitive.transparency or 0
+			img.ImageRectOffset = style.rect_offset or Vector2.zero
+			img.ImageRectSize = style.rect_size or Vector2.zero
+			img.ResampleMode = style.resample or Enum.ResamplerMode.Default
+			img.ScaleType = style.scale_type or Enum.ScaleType.Stretch
+			img.SliceCenter = style.slice_center or EMPTY_RECT
+			img.SliceScale = style.slice_scale or 0
+			img.TileSize = style.tile_size or UDim2.fromScale(1, 1)
+			instance = img
 		elseif primitive.hotspot then
-			instance = self:acquire<<Frame>>("Frame", "Hotspot")
-			instance.BackgroundTransparency = 1
-			instance.Active = true
+			const spot = self:acquire<<Frame>>("Frame", "Hotspot")
+			spot.BackgroundTransparency = 1
+			spot.Active = true
+			instance = spot
 		else
-			instance = self:acquire<<Frame>>("Frame")
-			instance.BackgroundColor3 = primitive.color or color.WHITE
-			instance.BackgroundTransparency = primitive.transparency or 0
+			const frame = self:acquire<<Frame>>("Frame")
+			frame.BackgroundColor3 = primitive.color or color.WHITE
+			frame.BackgroundTransparency = primitive.transparency or 0
+			instance = frame
 		end
 
-		instance.BorderSizePixel = 0
 		instance.Visible = true
 		instance.Position = UDim2.fromOffset(primitive.bounds.Min.X - origin.X, primitive.bounds.Min.Y - origin.Y)
 		instance.Size = UDim2.fromOffset(primitive.bounds.Width, primitive.bounds.Height)
@@ -105,11 +115,10 @@ function gui_object_renderer.render(self: Renderer, composite: types.Composite)
 		instance.ZIndex = z
 
 		if primitive.round then
-			const corner = self:acquire("UICorner") :: UICorner
-			corner.TopLeftRadius = UDim.new(0, primitive.round.tl)
-			corner.TopRightRadius = UDim.new(0, primitive.round.tr)
-			corner.BottomLeftRadius = UDim.new(0, primitive.round.bl)
-			corner.BottomRightRadius = UDim.new(0, primitive.round.br)
+			const corner = self:acquire<<UICorner>>("UICorner")
+			const r = primitive.round
+			const radius = r.tl or r.tr or r.bl or r.br or 0
+			corner.CornerRadius = UDim.new(0, radius)
 			corner.Parent = instance
 		end
 
@@ -118,13 +127,19 @@ function gui_object_renderer.render(self: Renderer, composite: types.Composite)
 		end
 	end
 
-	for _, pool in self.pools do
-		for i = pool.used + 1, #pool.instances do
-			const instance = pool.instances[i]
-			if instance:IsA("GuiObject") then
-				instance.Visible = false
-			else
-				instance.Parent = nil
+	for name, pool in self.pools do
+		if name == "UICorner" then
+			for i = pool.used + 1, #pool.instances do
+				pool.instances[i].Parent = nil
+			end
+		else
+			for i = pool.used + 1, #pool.instances do
+				const inst = pool.instances[i]
+				if inst:IsA("GuiObject") then
+					inst.Visible = false
+				else
+					inst.Parent = nil
+				end
 			end
 		end
 	end

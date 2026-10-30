@@ -1,10 +1,10 @@
 local RunService = game:GetService("RunService")
 
+local rect_sized = require("../rects/rect_sized")
+local types = require("../types")
 local gui_object_renderer = require("./gui_object_renderer")
 local input_source_intent = require("./input_source_intent")
-local rect_sized = require("../rects/rect_sized")
 local scope = require("./scope")
-local types = require("../types")
 local update_intent_state = require("./update_intent_state")
 
 type Cleanup = () -> ()
@@ -46,9 +46,12 @@ const function ui_lab_story<C>(story: types.Story<C>): GenericStory<C>
 			catcher.Active = true
 			catcher.Parent = generic_properties.target
 
-			const intent = input_source_intent.new(catcher, function(point)
-				return point - generic_properties.target.AbsolutePosition
-			end)
+			const intent = input_source_intent.new(
+				catcher,
+				function(point)
+					return point - generic_properties.target.AbsolutePosition
+				end
+			)
 
 			const ink_properties: types.StoryProperties<C> = {
 				controls = table.clone(generic_properties.controls) :: types.ProcessControls<C>,
@@ -62,8 +65,10 @@ const function ui_lab_story<C>(story: types.Story<C>): GenericStory<C>
 			end)
 
 			const connection = RunService.PreRender:Connect(function(dt: number)
-				ink_properties.target_bounds =
-					rect_sized(generic_properties.target.AbsoluteSize.X, generic_properties.target.AbsoluteSize.Y)
+				ink_properties.target_bounds = rect_sized(
+					generic_properties.target.AbsoluteSize.X,
+					generic_properties.target.AbsoluteSize.Y
+				)
 
 				root_scope:next(dt)
 				update_intent_state(intent.state, intent:take())
@@ -76,6 +81,7 @@ const function ui_lab_story<C>(story: types.Story<C>): GenericStory<C>
 				connection:Disconnect()
 				renderer:destroy()
 				intent:destroy()
+				catcher:Destroy()
 				unsubscribe()
 			end
 		end,

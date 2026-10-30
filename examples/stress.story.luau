@@ -25,8 +25,6 @@ return ink.ui_labs_story({
 			rows[x] = ink.h_stack(column, CELL_GAP)
 		end
 
-		rows = ink.v_stack(rows, CELL_GAP)
-
-		return rows
+		return ink.v_stack(rows, CELL_GAP)
 	end,
 })

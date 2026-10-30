@@ -6,7 +6,8 @@ const function under_dampened(t: number, speed: number, damping: number): (numbe
 	local exp_cos = exp * math.cos(alpha * t)
 	local exp_sin_speed_damping_over_alpha = exp_sin * speed * damping * over_alpha
 
-	return exp_sin_speed_damping_over_alpha + exp_cos,
+	return
+		exp_sin_speed_damping_over_alpha + exp_cos,
 		exp_sin * over_alpha,
 		(exp_sin * alpha + speed * damping * exp_sin_speed_damping_over_alpha) * -1,
 		exp_cos - exp_sin_speed_damping_over_alpha
@@ -28,7 +29,8 @@ const function over_dampened(t: number, damping: number, speed: number): (number
 	local exp1 = math.exp(t * z1)
 	local exp2 = math.exp(t * z2)
 
-	return (exp2 * z1 - exp1 * z2) * neg_half_over_alpha_speed,
+	return
+		(exp2 * z1 - exp1 * z2) * neg_half_over_alpha_speed,
 		(exp1 - exp2) * neg_half_over_alpha_speed / speed,
 		(exp2 - exp1) * neg_half_over_alpha_speed * speed,
 		(exp1 * z1 - exp2 * z2) * neg_half_over_alpha_speed
@@ -40,7 +42,7 @@ const function spring_coefficients(t: number, damping: number, speed: number): (
 	end
 
 	if damping > 1 then
-		return over_dampened(t, speed, damping)
+		return over_dampened(t, damping, speed)
 	elseif damping == 1 then
 		return critically_dampened(t, speed)
 	else

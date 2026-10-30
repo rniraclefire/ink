@@ -1,9 +1,6 @@
 local types = require("../types")
 
-type AfterState = {
-	elasped: number,
-	duration: number,
-}
+type AfterState = { elasped: number, duration: number }
 
 const function new_state(): AfterState
 	return { elasped = 0, duration = 0 }

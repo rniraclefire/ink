@@ -13,11 +13,13 @@ const CONTROLS = {
 return ink.ui_labs_story({
 	controls = CONTROLS,
 	render = function(properties: ink.StoryProperties<typeof(CONTROLS)>)
-		local content = {
-			ink.image(ink.rect_sized(24, 24), "rbxassetid://8517323790"),
-			ink.align(ink.text(properties.controls.label, BUTTON_STYLE), ink.rect_sized(0, 24), nil, 0.5),
-		}
-		content = ink.h_stack(content, 8)
+		local content = ink.h_stack(
+			{
+				ink.image(ink.rect_sized(24, 24), "rbxassetid://8517323790"),
+				ink.align(ink.text(properties.controls.label, BUTTON_STYLE), ink.rect_sized(0, 24), nil, 0.5),
+			},
+			8
+		)
 		content = ink.pad_xy(content, 16, 12)
 
 		local bg = ink.solid(content.bounds)
@@ -28,8 +30,7 @@ return ink.ui_labs_story({
 
 		local hot, spot = ink.hotspot(properties.scope:key("hitbox"), bg.bounds)
 
-		const target_bg = if hot.state == Enum.GuiState.Hover
-			then ink.color.shade(properties.controls.color, 0.05)
+		const target_bg = if hot.state == Enum.GuiState.Hover then ink.color.shade(properties.controls.color, 0.05)
 			elseif hot.state == Enum.GuiState.Press then ink.color.shade(properties.controls.color, -0.05)
 			else properties.controls.color
 		const target_fg = ink.color.shade(target_bg, -0.25)

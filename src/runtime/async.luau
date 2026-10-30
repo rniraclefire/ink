@@ -1,5 +1,5 @@
-const is_equal_packs = require("./is_equal_packs")
 const types = require("../types")
+const is_equal_packs = require("./is_equal_packs")
 
 type State<T> = {
 	args: types.Pack,
@@ -44,15 +44,24 @@ const function run<T, A...>(state: State<T>, generation: number, compute: Comput
 	end
 end
 
+const function pack_into(target: types.Pack, ...: unknown)
+	const n = select("#", ...)
+	table.clear(target)
+	target.n = n
+	for i = 1, n do
+		target[i] = select(i, ...)
+	end
+end
+
 const function async<T, A...>(s: types.Scope, default: T, compute: Compute<T, A...>, ...: A...): T
-	const state = s:once(new_state<<T>>)
+	const state = s:once(new_state) :: State<T>
 
 	if state.generation == 0 or not is_equal_packs(state.args, ...) then
 		if state.generation == 0 then
 			state.value = default
 		end
 		state.generation += 1
-		state.args = (table.pack :: any)(...)
+		pack_into(state.args, ...)
 		state.done = false
 		state.running = true
 		task.defer(run, state, state.generation, compute, ...)
