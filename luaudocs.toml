@@ -1,5 +1,5 @@
 title = "Ink"
-description = "Zero-hierachy immediate-mode UI library for Roblox and Vortex."
+description = "Roblox UI beyond instance trees."
 
 [source]
 entries = ["src"]
@@ -8,16 +8,21 @@ entries = ["src"]
 url = "https://github.com/teamfireworks/ink"
 
 [site]
-siteTitle = "Ink"
-# logo = "/logo.svg"
-# favicon = "/favicon.ico"
-# ogImage = "/og.png"
+siteTitle = false
+logo = "/wordmark.png"
+favicon = "/social.png"
+ogImage = "/social.png"
 footer = { copyright = "Copyright © 2026 Team Fireworks Games" }
 
 [[site.nav]]
 text = "Guide"
-link = "/guide/getting-started"
+link = "/guide/introduction"
 activeMatch = "^/guide/"
+
+[[site.nav]]
+text = "API"
+link = "/api"
+activeMatch = "^/api/"
 
 # Extra head tags on every page (analytics, site verification).
 # [[site.head]]

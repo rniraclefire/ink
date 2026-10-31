@@ -1,12 +1,6 @@
-/*
- * Your site's styling, loaded on every page. Override brand colors, the hero
- * gradient, or any default-theme variable here:
- * https://vitepress.dev/guide/extending-default-theme#customizing-css
- *
- * Delete this file and the next build stops loading it.
- */
 :root {
-	/* --vp-c-brand-1: #646cff; */
-	/* --vp-c-brand-2: #747bff; */
-	/* --vp-c-brand-3: #535bf2; */
+	--vp-c-brand-1: #f2765e;
+	--vp-c-brand-2: #f2765e;
+	--vp-c-brand-3: #f2765e;
+	--vp-c-brand-soft: #f2765e;
 }
