@@ -38,7 +38,7 @@ linkRobloxTypes = true
 # dir = ".luaudocs"
 # Published site URL: enables sitemap.xml and, for project pages
 # (user.github.io/repo/), derives the base path.
-# url = "https://ink.teamfireworks.org"
+url = "https://ink.teamfireworks.org"
 # Keep .vitepress/generated/readme.md, a copy of README.md (moonwave hide
 # markers honored), fresh for an index.md that @includes it.
 # includeReadme = true
