@@ -1,10 +1,10 @@
 [package]
 name = "teamfireworks/ink"
 version = "0.1.0-rc.4"
-description = "Zero-hierarchy immediate-mode UI for Roblox"
+description = "Roblox UI beyond the instance tree"
 authors = ["rniraclefire"]
-logo = ".github/assets/brand/icon.png"
-repository = "rniraclefire/ink"
+logo = ".luaudocs/public/social.png"
+repository = "teamfireworks/ink"
 license = "MIT"
 
 [target]
