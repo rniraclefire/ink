@@ -2,6 +2,7 @@ local intersect_rects = require("../rects/intersect_rects")
 local is_in_rect = require("../rects/is_in_rect")
 local types = require("../types")
 
+--- Updates hotspot states each frame from the latest input, using last frame's hotspots.
 const function update_intent_state(state: types.IntentState, intent: types.Intent)
 	for _, primitive in state.hotspots do
 		const hotspot = assert(primitive.hotspot, "Missing hotspot")

@@ -1,5 +1,6 @@
 const lerp_types = require("./datatypes/lerp_types")
 
+--- Interpolates between two values of the same type.
 const function lerp<T>(initial: T, goal: T, alpha: number): T
 	const initial_kind, goal_type = typeof(initial), typeof(goal)
 	if initial_kind == goal_type then

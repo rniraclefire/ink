@@ -1,5 +1,6 @@
 type Shared = { frame: number, dt: number, time: number }
 
+--- Stores state between frames at named keys. Unused values are cleared next frame.
 const scope = {}
 scope.__index = scope
 
@@ -11,9 +12,10 @@ export type Scope = setmetatable<{
 	value: unknown,
 	pending: unknown,
 	pending_frame: number?,
+	parent: Scope?,
 }, typeof(scope)>
 
-const function new_scope(shared: Shared): Scope
+const function new_scope(shared: Shared, parent: Scope?): Scope
 	return setmetatable({
 		shared = shared,
 		flipped_on = -1,
@@ -22,9 +24,11 @@ const function new_scope(shared: Shared): Scope
 		value = nil,
 		pending = nil,
 		pending_frame = nil,
+		parent = parent,
 	}, scope)
 end
 
+--- Returns a new scope.
 function scope.new(): Scope
 	return new_scope({ frame = 0, dt = 0, time = 0 })
 end
@@ -51,7 +55,7 @@ function scope.key(self: Scope, name: string): Scope
 	flip(self)
 	local child = self.current[name]
 	if child == nil then
-		child = self.previous[name] or new_scope(self.shared)
+		child = self.previous[name] or new_scope(self.shared, self)
 		self.current[name] = child
 	end
 	return child

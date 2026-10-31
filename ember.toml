@@ -1,7 +1,7 @@
 [package]
 name = "teamfireworks/ink"
-version = "0.1.0-rc.3"
-description = "Zero-Hierarchy Immediate-Mode UI for Roblox"
+version = "0.1.0-rc.4"
+description = "Zero-hierarchy immediate-mode UI for Roblox"
 authors = ["rniraclefire"]
 logo = ".github/assets/brand/icon.png"
 repository = "rniraclefire/ink"
@@ -10,6 +10,7 @@ license = "MIT"
 [target]
 environment = "roblox"
 main = "src/init.luau"
+includes = ["ember.lock", "ember.toml", "src", "README.md", "LICENSE"]
 
 [tools]
 luau-lsp = "johnnymorganz/luau-lsp@1.70.1"

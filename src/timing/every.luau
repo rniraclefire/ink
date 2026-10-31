@@ -9,7 +9,7 @@ const function new_state(): AfterState
 	return { elasped = 0, duration = 0 }
 end
 
---- Returns true for every interval of the specified duration in seconds has elapsed.
+--- Returns true each time another interval of the specified duration in seconds has elapsed.
 const function every(s: types.Scope, duration: number)
 	const state = s:once(new_state)
 	if state.duration ~= duration then

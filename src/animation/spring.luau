@@ -18,6 +18,7 @@ const function new_state<T>(): State<T>
 	return { kind = nil, target = nil, goal = {}, position = {}, velocity = {}, resting = true }
 end
 
+--- Animates towards a target with physically simulated motion, keeping its momentum when the target changes.
 const function spring<T>(s: types.Scope, target: T, speed: number?, damping: number?): T
 	const state = s:once(new_state<<T>>)
 	const kind = typeof(target)

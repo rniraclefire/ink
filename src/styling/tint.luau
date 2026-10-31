@@ -1,5 +1,6 @@
 const types = require("../types")
 
+--- Recolors and/or fades every Primitive in a Composite.
 const function tint(c: types.Composite, color: Color3?, transparency: number?): types.Composite
 	const new_primitives = table.create<<types.Primitive>>(#c.primitives)
 	for index, primitive in c.primitives do

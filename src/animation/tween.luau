@@ -1,7 +1,7 @@
 local TweenService = game:GetService("TweenService")
 
 local lerp_types = require("./datatypes/lerp_types")
-local scope = require("../runtime/scope")
+local scope = require("../state/scope")
 
 export type State<T> = {
 	kind: string?,
@@ -21,6 +21,7 @@ const function new_state<T>(): State<T>
 	}
 end
 
+--- Animates towards a target over a fixed duration with easing, restarting from the current value when the target changes.
 const function tween<T>(
 	s: scope.Scope,
 	goal: T,

@@ -1,6 +1,7 @@
 local intersect_rects = require("../rects/intersect_rects")
 local types = require("../types")
 
+--- Restricts a composite's visible area to a rect, discarding anything entirely outside it.
 const function clip(composite: types.Composite, bounds: Rect): types.Composite
 	const out_primitives = {}
 	for _, primitive in composite.primitives do

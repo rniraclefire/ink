@@ -2,19 +2,20 @@ local color = require("../animation/color")
 local is_equal_rects = require("../rects/is_equal_rects")
 local types = require("../types")
 
+--- Draws composites as pooled Roblox GuiObject instances.
 const gui_object_renderer = {}
 gui_object_renderer.__index = gui_object_renderer
 
-export type Renderer = setmetatable<{
+export type GuiObjectRenderer = setmetatable<{
 	pools: { [string]: { instances: { Instance }, used: number } },
 	root: Instance,
 }, typeof(gui_object_renderer)>
 
-function gui_object_renderer.new(root: Instance): Renderer
+function gui_object_renderer.new(root: Instance): GuiObjectRenderer
 	return setmetatable({ pools = {}, root = root }, gui_object_renderer)
 end
 
-function gui_object_renderer.acquire<T>(self: Renderer, class_name: string, pool_name: string?): T
+function gui_object_renderer.acquire<T>(self: GuiObjectRenderer, class_name: string, pool_name: string?): T
 	const key = pool_name or class_name
 	local pool = self.pools[key]
 	if not pool then
@@ -30,7 +31,7 @@ function gui_object_renderer.acquire<T>(self: Renderer, class_name: string, pool
 	return instance
 end
 
-function gui_object_renderer.render(self: Renderer, composite: types.Composite)
+function gui_object_renderer.render(self: GuiObjectRenderer, composite: types.Composite)
 	debug.profilebegin("Ink Render")
 
 	for _, pool in self.pools do
@@ -132,7 +133,7 @@ function gui_object_renderer.render(self: Renderer, composite: types.Composite)
 	debug.profileend()
 end
 
-function gui_object_renderer.destroy(self: Renderer)
+function gui_object_renderer.destroy(self: GuiObjectRenderer)
 	for _, pool in self.pools do
 		for _, instance in pool.instances do
 			instance:Destroy()

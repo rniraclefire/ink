@@ -1,3 +1,4 @@
+--- Returns whether two optional Rects have the same position and size.
 const function is_equal_rects(a: Rect?, b: Rect?): boolean
 	if a == nil or b == nil then
 		return a == b

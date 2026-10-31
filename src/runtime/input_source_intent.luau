@@ -1,9 +1,10 @@
 const types = require("../types")
 
+--- Collects player input from an input source, such as UserInputService or a GuiObject.
 const input_source_intent = {}
 input_source_intent.__index = input_source_intent
 
-export type RobloxIntent = setmetatable<{
+export type InputSourceIntent = setmetatable<{
 	pending: types.Intent,
 	state: types.IntentState,
 	to_local: (Vector2) -> Vector2,
@@ -26,8 +27,8 @@ const function new_intent(): types.Intent
 	}
 end
 
-function input_source_intent.new(source: types.IntentSource, to_local: (Vector2) -> Vector2): RobloxIntent
-	const self: RobloxIntent = setmetatable({
+function input_source_intent.new(source: types.IntentSource, to_local: (Vector2) -> Vector2): InputSourceIntent
+	const self: InputSourceIntent = setmetatable({
 		pending = new_intent(),
 		state = { hotspots = {}, active = nil },
 		to_local = to_local,
@@ -89,7 +90,7 @@ function input_source_intent.new(source: types.IntentSource, to_local: (Vector2)
 	return self
 end
 
-function input_source_intent.take(self: RobloxIntent): types.Intent
+function input_source_intent.take(self: InputSourceIntent): types.Intent
 	const pending = self.pending
 	const pointer = self.to_local(self.screen_pointer)
 
@@ -106,7 +107,7 @@ function input_source_intent.take(self: RobloxIntent): types.Intent
 	return snapshot
 end
 
-function input_source_intent.commit(self: RobloxIntent, composite: types.Composite)
+function input_source_intent.commit(self: InputSourceIntent, composite: types.Composite)
 	const hotspots = self.state.hotspots
 	table.clear(hotspots)
 	for _, primitive in composite.primitives do
@@ -118,7 +119,7 @@ function input_source_intent.commit(self: RobloxIntent, composite: types.Composi
 	end
 end
 
-function input_source_intent.destroy(self: RobloxIntent)
+function input_source_intent.destroy(self: InputSourceIntent)
 	for _, connection in self.connections do
 		connection:Disconnect()
 	end

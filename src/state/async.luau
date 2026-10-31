@@ -44,6 +44,7 @@ const function run<T, A...>(state: State<T>, generation: number, compute: Comput
 	end
 end
 
+--- Runs a computation in a separate thread, returning a default value until its result is ready.
 const function async<T, A...>(s: types.Scope, default: T, compute: Compute<T, A...>, ...: A...): T
 	const state = s:once(new_state<<T>>)
 

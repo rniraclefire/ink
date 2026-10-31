@@ -1,5 +1,6 @@
 const types = require("../types")
 
+--- Moves a composite by a pixel offset.
 const function translate(composite: types.Composite, x: number?, y: number?): types.Composite
 	const offset = Vector2.new(x, y)
 	const out_primitives = table.create<<primitives.Primitive>>(#composite.primitives)

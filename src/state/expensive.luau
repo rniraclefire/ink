@@ -11,7 +11,7 @@ const function new_state<T>(): State<T>
 	return { args = { n = 0 }, value = { n = 0 }, first_computed = false }
 end
 
---- Caches a computation’s results, recomputing only when its arguments change.
+--- Caches a computation's results, recomputing only when its arguments change.
 const function expensive<A..., R...>(s: types.Scope, compute: (s: types.Scope, A...) -> R..., ...: A...): R...
 	const state = s:once(new_state)
 

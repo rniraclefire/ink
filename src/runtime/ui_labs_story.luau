@@ -3,7 +3,7 @@ local RunService = game:GetService("RunService")
 local gui_object_renderer = require("./gui_object_renderer")
 local input_source_intent = require("./input_source_intent")
 local rect_sized = require("../rects/rect_sized")
-local scope = require("./scope")
+local scope = require("../state/scope")
 local types = require("../types")
 local update_intent_state = require("./update_intent_state")
 
@@ -28,6 +28,7 @@ type GenericStory<C = nil> = {
 	render: (properties: GenericProperties) -> Cleanup?,
 }
 
+--- Wraps an Ink UI function as a UI Labs story. Implements the frame loop, input and controls.
 const function ui_lab_story<C>(story: types.Story<C>): GenericStory<C>
 	return {
 		name = story.name,

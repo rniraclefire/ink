@@ -1,4 +1,4 @@
-local scope = require("./runtime/scope")
+local scope = require("./state/scope")
 
 -- Utility
 
@@ -54,6 +54,8 @@ export type Composite = {
 	bounds: Rect,
 	hitbox_scope: scope.Scope?,
 }
+
+export type Length = number | { read fr: number }
 
 -- Runtime
 

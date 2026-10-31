@@ -1,5 +1,6 @@
 local types = require("../types")
 
+--- Rounds the corners of every primitive in a composite.
 const function round(c: types.Composite, amount: number | types.RoundStyle): types.Composite
 	const new_primitives = table.create<<types.Primitive>>(#c.primitives)
 	const round: types.RoundStyle = type(amount) == "table" and amount

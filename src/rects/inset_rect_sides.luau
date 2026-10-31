@@ -1,3 +1,4 @@
+--- Shrinks a rect by a separate amount on each side.
 const function inset_sides(rect: Rect, top: number, left: number, bottom: number, right: number)
 	return Rect.new(
 		rect.Min.X + left,
