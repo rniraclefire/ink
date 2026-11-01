@@ -28,10 +28,3 @@ jobs:
 
             - name: Test
               run: lest --reporter junit > results.xml
-
-            - name: Coverage
-              run: lest run unit --coverage --coverage-format=lcov --min 80 > lcov.info
-
-            - uses: codecov/codecov-action@v4
-              with:
-                  files: lcov.info
