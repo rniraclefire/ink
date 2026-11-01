@@ -1,3 +1,6 @@
+const compat = require("../compat")
+const Rect = compat.Rect
+
 --- Returns the smallest rect with the given aspect ratio (width over height) that covers the specified container.
 const function aspect_cover(container: Rect, aspect: number, align_x: number?, align_y: number?): Rect
 	local w = container.Width

@@ -1,0 +1,37 @@
+name: ci
+
+on: [push, pull_request]
+
+jobs:
+    test:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+
+            - name: Cache ember tools
+              uses: actions/cache@v4
+              with:
+                  path: ~/.ember/tools
+                  key: ember-tools-${{ runner.os }}-${{ hashFiles('ember.toml') }}
+
+            - name: Install embr
+              run: |
+                  curl -fsSL -o embr https://github.com/ember-luau/ember/releases/download/v0.10.0/embr-linux-x86_64
+                  chmod +x embr
+                  ./embr self install
+                  echo "$HOME/.ember/bin" >> "$GITHUB_PATH"
+
+            - name: Install dependencies and tools
+              run: embr install
+
+            - name: Test
+              run: lest --reporter junit > results.xml
+
+            - name: Coverage
+              run: lest run unit --coverage --coverage-format=lcov --min 80 > lcov.info
+
+            - uses: codecov/codecov-action@v4
+              with:
+                  files: lcov.info

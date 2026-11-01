@@ -1,19 +1,18 @@
-# Builds the docs and deploys them to GitHub Pages on every push to the branch
-# below (your repository's default branch when this file was scaffolded).
-# Set the repository's Pages source to "GitHub Actions" and this workflow runs
-# as-is: Node is the only tool to install, and configure-pages reports the base
-# URL so project-pages paths and custom domains resolve without a [docs] url.
-name: Docs
+name: docs
+
 on:
     push:
         branches: ["main"]
+
 permissions:
     contents: read
     pages: write
     id-token: write
+
 concurrency:
     group: pages
     cancel-in-progress: false
+
 jobs:
     publish:
         runs-on: ubuntu-latest
