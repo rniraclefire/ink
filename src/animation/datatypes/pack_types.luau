@@ -1,4 +1,4 @@
-local color = require("../color")
+const color = require("../color")
 
 const pack_types: { [string]: (v: any, out: { number }) -> () } = {
 	number = function(v: number, out)

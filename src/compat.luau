@@ -7,7 +7,11 @@ const function polyfill(api: string): never
 end
 
 const compat = {
+	is_roblox = game == nil,
 	is_lune = is_lune,
+
+	game = game or lune_roblox.Instance.new("DataModel") :: never,
+	task = task or require("@lune/task") :: never,
 
 	Axes = Axes or polyfill("Axes"),
 	BrickColor = BrickColor or polyfill("BrickColor"),
@@ -18,6 +22,7 @@ const compat = {
 	Enum = Enum or polyfill("Enum"),
 	Faces = Faces or polyfill("Faces"),
 	Font = Font or polyfill("Font"),
+	Instance = Instance or polyfill("Instance"),
 	NumberRange = NumberRange or polyfill("NumberRange"),
 	NumberSequence = NumberSequence or polyfill("NumberSequence"),
 	NumberSequenceKeypoint = NumberSequenceKeypoint or polyfill("NumberSequenceKeypoint"),

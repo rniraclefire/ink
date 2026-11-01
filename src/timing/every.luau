@@ -15,11 +15,12 @@ const function every(s: types.Scope, duration: number)
 	if state.duration ~= duration then
 		state.duration = duration
 		state.elasped = 0
-	elseif state.elasped >= state.duration then
+	end
+	state.elasped += s:dt()
+	if state.elasped >= state.duration then
 		state.elasped -= state.duration
 		return true
 	end
-	state.elasped += s:dt()
 	return false
 end
 

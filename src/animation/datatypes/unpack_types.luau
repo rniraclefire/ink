@@ -1,4 +1,34 @@
-local color = require("../color")
+--!nolint LocalUnused
+-- ^ You will see why
+
+const color = require("../color")
+
+const compat = require("../../compat")
+const Axes, BrickColor, CFrame, Color3, ColorSequence, ColorSequenceKeypoint, Enum, Faces, Font, Instance, NumberRange, NumberSequence, NumberSequenceKeypoint, PhysicalProperties, Ray, Rect, Region3, Region3int16, UDim, UDim2, Vector2, Vector2int16, Vector3, Vector3int16 =
+	compat.Axes,
+	compat.BrickColor,
+	compat.CFrame,
+	compat.Color3,
+	compat.ColorSequence,
+	compat.ColorSequenceKeypoint,
+	compat.Enum,
+	compat.Faces,
+	compat.Font,
+	compat.Instance,
+	compat.NumberRange,
+	compat.NumberSequence,
+	compat.NumberSequenceKeypoint,
+	compat.PhysicalProperties,
+	compat.Ray,
+	compat.Rect,
+	compat.Region3,
+	compat.Region3int16,
+	compat.UDim,
+	compat.UDim2,
+	compat.Vector2,
+	compat.Vector2int16,
+	compat.Vector3,
+	compat.Vector3int16
 
 const unpack_types: { [string]: (value: { number }) -> any } = {
 	number = function(value)
@@ -15,7 +45,7 @@ const unpack_types: { [string]: (value: { number }) -> any } = {
 	end,
 
 	ColorSequenceKeypoint = function(v)
-		return ColorSequenceKeypoint.new(v[1], Color3.new(v[2], v[3], v[4]))
+		return ColorSequenceKeypoint.new(math.clamp(v[1], 0, 1), color.lab_to_color3(Vector3.new(v[2], v[3], v[4])))
 	end,
 
 	DateTime = function(v)

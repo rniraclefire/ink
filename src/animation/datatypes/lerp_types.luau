@@ -1,4 +1,7 @@
-local color = require("../color")
+const compat = require("../../compat")
+const CFrame, UDim2, Vector2, Vector3 = compat.CFrame, compat.UDim2, compat.Vector2, compat.Vector3
+
+const color = require("../color")
 
 const function lerp_color3(initial: Color3, goal: Color3, ratio: number)
 	local initial_vector = color.color3_to_lab(initial)

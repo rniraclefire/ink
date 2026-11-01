@@ -1,4 +1,4 @@
-local types = require("../types")
+const types = require("../types")
 
 type AfterState = {
 	elasped: number,
@@ -15,11 +15,9 @@ const function after(s: types.Scope, duration: number)
 	if state.duration ~= duration then
 		state.duration = duration
 		state.elasped = 0
-	elseif state.elasped >= state.duration then
-		return true
 	end
 	state.elasped += s:dt()
-	return false
+	return state.elasped >= state.duration
 end
 
 return after

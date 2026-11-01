@@ -1,3 +1,6 @@
+local compat = require("../compat")
+const task = compat.task
+
 const is_equal_packs = require("./is_equal_packs")
 const types = require("../types")
 

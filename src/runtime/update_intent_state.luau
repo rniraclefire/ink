@@ -1,6 +1,9 @@
-local intersect_rects = require("../rects/intersect_rects")
-local is_in_rect = require("../rects/is_in_rect")
-local types = require("../types")
+const compat = require("../compat")
+const Enum, Vector2 = compat.Enum, compat.Vector2
+
+const intersect_rects = require("../rects/intersect_rects")
+const is_in_rect = require("../rects/is_in_rect")
+const types = require("../types")
 
 --- Updates hotspot states each frame from the latest input, using last frame's hotspots.
 const function update_intent_state(state: types.IntentState, intent: types.Intent)
@@ -58,7 +61,7 @@ const function update_intent_state(state: types.IntentState, intent: types.Inten
 	end
 
 	if active and hover_hit ~= active then
-		active.pointer = intent.pointer
+		active.pointer = intent.pointer - active.bounds.Min
 	end
 end
 

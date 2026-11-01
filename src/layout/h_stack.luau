@@ -1,3 +1,6 @@
+const compat = require("../compat")
+const Rect = compat.Rect
+
 const translate_into = require("./translate_into")
 const types = require("../types")
 

@@ -9,6 +9,9 @@
 --     https://github.com/rniraclefire/ink
 -- Licensed under MIT
 
+const compat = require("../compat")
+const Color3, Vector3 = compat.Color3, compat.Vector3
+
 local function cbrt(x: number)
 	return math.sign(x) * math.abs(x) ^ (1 / 3)
 end

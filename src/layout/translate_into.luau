@@ -1,4 +1,7 @@
-local types = require("../types")
+const compat = require("../compat")
+const Rect, Vector2 = compat.Rect, compat.Vector2
+
+const types = require("../types")
 
 const function translate_into(c: types.Composite, dx: number, dy: number, out: { types.Primitive })
 	const offset = Vector2.new(dx, dy)

@@ -20,7 +20,7 @@ const function critically_dampened(t: number, speed: number): (number, number, n
 	return exp * (time_speed + 1), exp * t, exp * (time_speed_neg1 * speed), exp * (time_speed_neg1 + 1)
 end
 
-const function over_dampened(t: number, damping: number, speed: number): (number, number, number, number)
+const function over_dampened(t: number, speed: number, damping: number): (number, number, number, number)
 	local alpha = math.sqrt(damping ^ 2 - 1)
 	local neg_half_over_alpha_speed = -0.5 / (alpha * speed)
 	local z1 = speed * (alpha + damping) * -1

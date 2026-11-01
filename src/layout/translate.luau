@@ -1,3 +1,6 @@
+const compat = require("../compat")
+const Rect, Vector2 = compat.Rect, compat.Vector2
+
 const types = require("../types")
 
 --- Moves a composite by a pixel offset.

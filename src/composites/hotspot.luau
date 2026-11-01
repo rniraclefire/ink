@@ -1,5 +1,8 @@
 local types = require("../types")
 
+const compat = require("../compat")
+const Enum, Rect, Vector2 = compat.Enum, compat.Rect, compat.Vector2
+
 export type HitState = {
 	state: Enum.GuiState,
 	clicked: boolean,
