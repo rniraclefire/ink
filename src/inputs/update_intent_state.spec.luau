@@ -4,7 +4,7 @@ const describe, it, expect = lest.describe, lest.it, lest.expect
 const compat = require("../compat")
 const Rect, Vector2, Enum = compat.Rect, compat.Vector2, compat.Enum
 
-const hotspot = require("../composites/hotspot")
+const hit_region = require("./hit_region")
 const scope = require("../state/scope")
 const update_intent_state = require("./update_intent_state")
 
@@ -35,12 +35,12 @@ const function setup(...: { bounds: Rect, wheel: boolean?, clip: Rect? }): (any,
 	const hotspots, states = {}, {}
 	for i = 1, select("#", ...) do
 		const spec = select(i, ...)
-		const state, region = hotspot(s:key(tostring(i)), spec.bounds, { wheel = spec.wheel })
+		const hit, region = hit_region(s:key(tostring(i)), spec.bounds, { wheel = spec.wheel })
 		const primitive = region.primitives[1]
 		primitive.clip = spec.clip
-		state.bounds = spec.bounds
+		hit.bounds = spec.bounds
 		hotspots[i] = primitive
-		states[i] = state
+		states[i] = hit
 	end
 	return { hotspots = hotspots, active = nil }, states
 end

@@ -8,11 +8,11 @@ const types = require("../types")
 --- Updates hotspot states each frame from the latest input, using last frame's hotspots.
 const function update_intent_state(state: types.IntentState, intent: types.Intent)
 	for _, primitive in state.hotspots do
-		const hotspot = assert(primitive.hotspot, "Missing hotspot")
-		hotspot.state = Enum.GuiState.Idle
-		hotspot.clicked = false
-		hotspot.wheel = 0
-		hotspot.drag = Vector2.zero
+		const hit_region = assert(primitive.hit_region, "Missing hit region")
+		hit_region.state = Enum.GuiState.Idle
+		hit_region.clicked = false
+		hit_region.wheel = 0
+		hit_region.drag = Vector2.zero
 	end
 
 	local hover, wheel_target = nil, nil
@@ -23,7 +23,7 @@ const function update_intent_state(state: types.IntentState, intent: types.Inten
 			if hover == nil then
 				hover = primitive
 			end
-			if wheel_target == nil and primitive.hotspot_wheel then
+			if wheel_target == nil and primitive.hit_region_wheel then
 				wheel_target = primitive
 			end
 			if hover and wheel_target then
@@ -32,7 +32,7 @@ const function update_intent_state(state: types.IntentState, intent: types.Inten
 		end
 	end
 
-	const hover_hit = hover and hover.hotspot
+	const hover_hit = hover and hover.hit_region
 	if intent.pressed then
 		state.active = hover_hit
 	end
@@ -53,11 +53,11 @@ const function update_intent_state(state: types.IntentState, intent: types.Inten
 	end
 
 	if wheel_target then
-		assert(wheel_target.hotspot, "Missing hotspot").wheel = intent.wheel
+		assert(wheel_target.hit_region, "Missing hit region").wheel = intent.wheel
 	end
 
 	if hover then
-		assert(hover.hotspot, "Missing hotspot").pointer = intent.pointer - hover.bounds.Min
+		assert(hover.hit_region, "Missing hit region").pointer = intent.pointer - hover.bounds.Min
 	end
 
 	if active and hover_hit ~= active then

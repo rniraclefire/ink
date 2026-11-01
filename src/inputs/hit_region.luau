@@ -11,7 +11,7 @@ export type HitState = {
 	pointer: Vector2,
 }
 
-const function new_hotspot(): types.Hotspot
+const function new_hit_region(): types.HitRegion
 	return {
 		state = Enum.GuiState.Idle,
 		clicked = false,
@@ -23,14 +23,18 @@ const function new_hotspot(): types.Hotspot
 end
 
 --- Creates an invisible interactive region.
-const function hotspot(s: types.Scope, bounds: Rect, options: types.HotspotOptions?): (types.Hotspot, types.Composite)
-	const hotspot = s:once(new_hotspot)
+const function hit_region(
+	s: types.Scope,
+	bounds: Rect,
+	options: types.HitRegionOptions?
+): (types.HitRegion, types.Composite)
+	const hit = s:once(new_hit_region)
 	const primitive: types.Primitive = {
 		bounds = bounds,
-		hotspot = hotspot,
-		hotspot_wheel = options ~= nil and options.wheel == true,
+		hit_region = hit,
+		hit_region_wheel = options ~= nil and options.wheel == true,
 	}
-	return hotspot, { primitives = { primitive }, bounds = bounds }
+	return hit, { primitives = { primitive }, bounds = bounds }
 end
 
-return hotspot
+return hit_region

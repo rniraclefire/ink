@@ -10,8 +10,8 @@ export type Length = types.Length
 
 export type Intent = types.Intent
 export type IntentState = types.IntentState
-export type Hotspot = types.Hotspot
-export type HotspotOptions = types.HotspotOptions
+export type HitRegion = types.HitRegion
+export type HitRegionOptions = types.HitRegionOptions
 
 export type Scope = types.Scope
 export type Context<T> = context.Context<T>
@@ -27,8 +27,13 @@ const ink = table.freeze({
 	solid = require("@self/composites/solid"),
 	text = require("@self/composites/text"),
 	image = require("@self/composites/image"),
-	hotspot = require("@self/composites/hotspot"),
 	compose = require("@self/layout/compose"),
+
+	-- Inputs
+	hit_region = require("@self/inputs/hit_region"),
+	text_field = require("@self/inputs/text_field"),
+	update_intent_state = require("@self/inputs/update_intent_state"),
+	input_source_intent = require("@self/inputs/input_source_intent"),
 
 	-- Layouts
 	translate = require("@self/layout/translate"),
@@ -80,9 +85,7 @@ const ink = table.freeze({
 
 	-- Runtime
 	ui_labs_story = require("@self/runtime/ui_labs_story"),
-	update_intent_state = require("@self/runtime/update_intent_state"),
 	gui_object_renderer = require("@self/runtime/gui_object_renderer"),
-	input_source_intent = require("@self/runtime/input_source_intent"),
 })
 
 return ink

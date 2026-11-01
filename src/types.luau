@@ -45,8 +45,8 @@ export type Primitive = {
 	text_style: TextStyle?,
 	image: string?,
 	image_style: ImageStyle?,
-	hotspot: Hotspot?,
-	hotspot_wheel: boolean?,
+	hit_region: HitRegion?,
+	hit_region_wheel: boolean?,
 }
 
 export type Composite = {
@@ -80,10 +80,10 @@ export type Intent = {
 
 export type IntentState = {
 	hotspots: { Primitive },
-	active: Hotspot?,
+	active: HitRegion?,
 }
 
-export type Hotspot = {
+export type HitRegion = {
 	state: Enum.GuiState,
 	clicked: boolean,
 	wheel: number,
@@ -92,8 +92,12 @@ export type Hotspot = {
 	bounds: Rect,
 }
 
-export type HotspotOptions = {
+export type HitRegionOptions = {
 	wheel: boolean?,
+}
+
+export type TextFieldOptions = {
+	style: TextStyle,
 }
 
 export type function ProcessControls(controls: type): type

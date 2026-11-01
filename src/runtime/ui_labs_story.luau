@@ -1,11 +1,11 @@
 local RunService = game:GetService("RunService")
 
 local gui_object_renderer = require("./gui_object_renderer")
-local input_source_intent = require("./input_source_intent")
+local input_source_intent = require("../inputs/input_source_intent")
 local rect_sized = require("../rects/rect_sized")
 local scope = require("../state/scope")
 local types = require("../types")
-local update_intent_state = require("./update_intent_state")
+local update_intent_state = require("../inputs/update_intent_state")
 
 type Cleanup = () -> ()
 

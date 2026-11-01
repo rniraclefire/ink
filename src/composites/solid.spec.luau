@@ -30,7 +30,7 @@ describe("solid", function()
 		const p = solid(bounds).primitives[1]
 		expect(p.text).toBe(nil)
 		expect(p.image).toBe(nil)
-		expect(p.hotspot).toBe(nil)
+		expect(p.hit_region).toBe(nil)
 	end)
 end)
 

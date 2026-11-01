@@ -111,9 +111,9 @@ function input_source_intent.commit(self: InputSourceIntent, composite: types.Co
 	const hotspots = self.state.hotspots
 	table.clear(hotspots)
 	for _, primitive in composite.primitives do
-		const hotspot = primitive.hotspot
-		if hotspot then
-			hotspot.bounds = primitive.bounds
+		const hit = primitive.hit_region
+		if hit then
+			hit.bounds = primitive.bounds
 			table.insert(hotspots, primitive)
 		end
 	end

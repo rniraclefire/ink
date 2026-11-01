@@ -88,8 +88,8 @@ function gui_object_renderer.render(self: GuiObjectRenderer, composite: types.Co
 			instance.ScaleType = style.scale_type or Enum.ScaleType.Stretch
 			instance.SliceCenter = style.slice_center or Rect.new()
 			instance.SliceScale = style.slice_scale or 0
-		elseif primitive.hotspot then
-			instance = self:acquire<<Frame>>("Frame", "Hotspot")
+		elseif primitive.hit_region then
+			instance = self:acquire<<Frame>>("Frame", "Hit Region")
 			instance.BackgroundTransparency = 1
 			instance.Active = true
 		else
