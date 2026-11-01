@@ -78,6 +78,7 @@ const function ui_lab_story<C>(story: types.Story<C>): GenericStory<C>
 				renderer:destroy()
 				intent:destroy()
 				unsubscribe()
+				catcher:Destroy()
 			end
 		end,
 	}
