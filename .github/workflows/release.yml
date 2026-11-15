@@ -35,7 +35,7 @@ jobs:
           grep -q "version = \"$TAG\"" ember.toml || { echo "tag $TAG doesn't match manifest"; exit 1; }
 
       - name: Specs
-        run: lune run specs
+        run: embr test
 
       - name: Build
         run: rojo build package.project.json -o ink.rbxm
