@@ -1,0 +1,9 @@
+{
+	"name": "ink",
+	"globIgnorePaths": [
+		"**/*.spec.luau"
+	],
+	"tree": {
+		"$path": "src"
+	}
+}

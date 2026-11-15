@@ -37,7 +37,12 @@ end
 
 --- Creates an invisible interactive region.
 const function hit_region(s: types.Scope, bounds: Rect, options: types.HitRegionOptions?): types.HitRegion
-	return s:get<<types.HitRegion?>>(nil) or s:set(new(bounds, options))
+	const self = s:get<<types.HitRegion?>>(nil) or s:set(new(bounds, options))
+	self.bounds = bounds
+	const primitive = self.primitives[1]
+	primitive.bounds = bounds
+	primitive.hit_region_wheel = options ~= nil and options.wheel == true
+	return self
 end
 
 return hit_region

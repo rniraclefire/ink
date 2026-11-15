@@ -5,109 +5,94 @@ sidebar_position: 1
 
 # Composites
 
-::: warning
+Everything in Ink revolves around composites and primitives.
+Composites are a collection of primitive elements with some bounding rectangle.
 
-This page was written prior to version `0.1.0-rc.5` which introduced some breaking changes. Documentation may be outdated!
+Importantly, primitives are painted first to last, so later primitives draw on
+top. You'll `compose` these composites to form UIs.
+
+## Primitives
+
+There are three visual primitives:
+
+```luau
+ink.solid(bounds, color?, transparency?)
+ink.text(content, style)
+ink.image(bounds, content, style?)
+```
+
+The other two, [hit regions](./hit-regions) and
+[text fields](./text-fields), handle input.
+
+`ink.text` measures itself. It returns a composite exactly as big as the text,
+so you can size things around it:
+
+```luau
+const STYLE: ink.TextStyle = { size = 18, font = Enum.Font.BuilderSansBold }
+
+local label = ink.text("Play", STYLE)
+print(label.bounds.Width)
+```
+
+::: tip
+
+Define `TextStyle` tables outside your render function, or cache them with
+[`ink.expensive`](./state#expensive), so they aren't created every frame.
 
 :::
 
+## Composites are values
+
+Every Ink function returns a **new** composite rather than changing the one you
+passed in. Reassign the variable as you go:
+
 ```luau
--- Everything Ink draws is a `Composite`, being a flat list of shapes with some
--- `Rect` bounds. Ink renders `Composite` and it's shapes from first to last.
---
--- There's four main "primitive" composites: solid colors, texts, images, and
--- hotspots. Let's start building up a button!
+local label = ink.text("Play", STYLE)
+label = ink.pad(label, ink.edges.xy(16, 8))
+label = ink.tint(label, Color3.new(1, 1, 1))
+```
 
--- `ink.text` takes in a `TextStyle`. It's recommended to define `Style` tables
--- outside of your main render loop as to avoid wasting reallocations.
-const BUTTON_STYLE: ink.TextStyle = {
-	size = 18,
-	font = Enum.Font.GothamBold,
-}
+Composites don't belong to a parent, so anything can be measured, overlapped
+and moved anywhere:
 
--- ...into the render loop...
+```luau
+const function button(s: ink.Scope, label: string)
+	local content = ink.text(label, STYLE)
+	content = ink.pad(content, ink.edges.xy(16, 8))
 
--- Components are plain functions, much like other libraries.
-const function button(scope: ink.Scope, label: string, on_activated: () -> ())
-    local label = ink.text(label, BUTTON_STYLE)
+	local bg = ink.solid(content.bounds, Color3.fromHex("#F2765E"))
+	bg = ink.round(bg, ink.corners.all(8))
 
-    -- Ink's API members often return a new `Composite`, ie. they're immutable.
-    -- Remember to assign the same composite with the same variable!
-    --
-    -- Here, Ink creates a cloned `Composite` with it's bounds padded by `16`
-    -- pixels horizontally and `12` pixels vertically.
-    --
-    -- It's worth noting, Ink always uses pixel values. You'll rarely see a
-    -- `UDim`, if ever.
-    label = ink.pad_xy(content, 16, 12)
+	const hit = ink.hit_region(s:key("hit"), bg.bounds)
 
-    -- Right now, this button only has text. Let's give it a solid color
-    -- background!
-    local bg = ink.solid(label.bounds)
-    bg = ink.round(bg, 4)
-
-    -- Hotspots are an invisible region that detects what the pointer is doing
-    -- to it, such as clicking and hovering.
-    --
-    -- `scope:key` here defines an inner value, which the hotspot will use to
-    -- store itself. You'll see this pattern a lot!
-    const hot, spot = ink.hotspot(scope, bg.bounds)
-    if hot.clicked then
-        on_activated()
-    end
-
-    -- Ink also comes with animation primitives. Let's add a hover animation!
-    const BUTTON_COLORS = {
-        [Enum.GuiState.Idle] = { bg = Color3.fromHex("#18CB40"), fg = Color3.fromHex("#0D5B1E") },
-        [Enum.GuiState.Hover] = { bg = Color3.fromHex("#1AD545"), fg = Color3.fromHex("#0D5B1E") },
-        [Enum.GuiState.Press] = { bg = Color3.fromHex("#16B63A"), fg = Color3.fromHex("#0D5B1E") },
-    }
-
-    const colors = BUTTON_COLORS[hot.state]
-    const bg_color = ink.tween(colors.bg, 0.3, Enum.EasingStyle.Quart)
-    const fg_color = ink.tween(colors.fg, 0.3, Enum.EasingStyle.Quart)
-
-    -- Many function arguments in Ink have optional values.
-    -- Here `tint` applies a color, but it can also apply transparency!
-    bg = ink.tint(bg, bg_color)
-    label = ink.tint(label, fg_color)
-
-    -- `compose` bounds composites together, such that layouts move these
-    -- as one unit.
-    --
-    -- Order matters here! First composites are rendered first.
-    return ink.compose({ bg, label, region })
+	return ink.compose({ bg, content, hit }, bg.bounds), hit.clicked
 end
+```
 
--- Let's try rendering some layouts.
---
--- Now, usually on other libraries, you'll have to make some UIListLayouts,
--- or, maybe throw in a `use_next_order()` here, and there.
---
--- Ink might suprise you.
+## Composing
 
-const function ui(scope: Scope)
-    -- Layout functions often take an array of composites. Let's create some.
-    const buttons = {}
-    for index, action in { "Like", "Subscribe", "Notifications" } do
-        local btn = button(scope, label, function()
-            print(action, "pressed")
-        end)
+`ink.compose` joins composites into one.
 
-        -- Ooh! Let's stagger them, for fun!
-        local multiplier = index - 1
-        local margin = multiplier * 24
-        btn = ink.translate(btn, margin, 0)
+```luau
+ink.compose({ bg, content })
+```
 
-        buttons[index] = btn
-    end
+By default, the composed bounds are a union of all composite bounds. You can
+provide your own bounds as below:
 
-    const list = ink.v_stack(buttons, 8)
+```luau
+ink.compose({ shadow, bg }, bg.bounds)
+```
 
-    -- Your eyes are not deceiving you.
+## Mapping primitives
 
-    -- It's that easy.
+To write your own transform, use `ink.map_primitives`. It clones each primitive
+and passes it to your function:
 
-    return list
+```luau
+const function hide(c: ink.Composite): ink.Composite
+	return ink.map_primitives(c, function(primitive)
+		primitive.transparency = 1
+	end)
 end
 ```

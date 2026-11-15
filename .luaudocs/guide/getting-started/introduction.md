@@ -7,8 +7,8 @@ sidebar_position: 1
 
 ::: warning
 
-Ink is still under development! Though the featureset has solidified, Ink is
-subject to breaking changes as needed. Documentation is also a work in progress!
+Ink is in alpha! While Ink is usable today, expect breaking changes and bugs
+as Ink continues development.
 
 :::
 
@@ -43,9 +43,9 @@ along with set _bounds_.
 Ink lets you operate on composites _after creation_. Ink provides an assortment
 of functions to transform and construct composites this way:
 
-```lua
+```luau
 local label = ink.text("Play", STYLE)
-local padded = ink.pad_xy(label, 16, 8)
+local padded = ink.pad(label, ink.edges.xy(16, 8))
 local button = ink.compose({ ink.solid(padded.bounds), padded })
 local centered = ink.align(button, viewport, ink.ALIGN_MID, ink.ALIGN_MID)
 ```

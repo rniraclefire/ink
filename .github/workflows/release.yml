@@ -1,0 +1,58 @@
+name: release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Cache ember tools
+        uses: actions/cache@v4
+        with:
+            path: ~/.ember/tools
+            key: ember-tools-${{ runner.os }}-${{ hashFiles('ember.toml') }}
+
+      - name: Install embr
+        run: |
+            curl -fsSL -o embr https://github.com/ember-luau/ember/releases/download/v0.10.0/embr-linux-x86_64
+            chmod +x embr
+            ./embr self install
+            echo "$HOME/.ember/bin" >> "$GITHUB_PATH"
+
+      - name: Install dependencies and tools
+        run: embr install
+
+      - name: Check tag matches manifest version
+        run: |
+          TAG="${GITHUB_REF_NAME#v}"
+          grep -q "version = \"$TAG\"" ember.toml || { echo "tag $TAG doesn't match manifest"; exit 1; }
+
+      - name: Specs
+        run: lune run specs
+
+      - name: Build
+        run: rojo build package.project.json -o ink.rbxm
+
+      - name: Release notes
+        run: |
+          awk -v v="## ${GITHUB_REF_NAME#v}" '$0 ~ "^"v {f=1; next} /^## / && f {exit} f' CHANGELOG.md > notes.md
+          test -s notes.md || { echo "no CHANGELOG entry for this version"; exit 1; }
+
+      - name: GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ink.rbxm
+          body_path: notes.md
+          prerelease: ${{ contains(github.ref_name, '-') }}
+
+      - name: Publish to Ember
+        run: embr publish
+        env:
+          EMBER_TOKEN: ${{ secrets.EMBER_TOKEN }}

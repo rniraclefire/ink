@@ -1,6 +1,6 @@
-:root {
+html:root {
 	--vp-c-brand-1: #f2765e;
-	--vp-c-brand-2: #f2765e;
-	--vp-c-brand-3: #f2765e;
-	--vp-c-brand-soft: #f2765e;
+	--vp-c-brand-2: color-mix(in oklab, #f2765e, black 10%);
+	--vp-c-brand-3: color-mix(in oklab, #f2765e, black 20%);
+	--vp-c-brand-soft: color-mix(in srgb, #f2765e 14%, transparent);
 }

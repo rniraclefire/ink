@@ -29,4 +29,12 @@ Ink will not be officially repackaged for other package managers due to the shee
 
 ## From GitHub Releases
 
+Roblox models of Ink can be downloaded from GitHub Releaaes: <https://github.com/rniraclefire/ink/releases>
+
 ## From Creator Store
+
+::: note
+
+Creator Store releases will be coming with Ink 0.2.
+
+:::

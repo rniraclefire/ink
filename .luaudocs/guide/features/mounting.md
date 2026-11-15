@@ -5,58 +5,72 @@ sidebar_position: 4
 
 # Mounting
 
-::: warning
+Mounting connects your UI function to the screen. Ink doesn't run anything by
+itself. Instead, you decide when each frame happens.
 
-This page was written prior to version `0.1.0-rc.5` which introduced some breaking changes. Documentation may be outdated!
-
-:::
+## `ink.mount`
 
 ```luau
--- Ink is set up with three independent parts, being the scope, the renderer,
--- and the intents.
---
--- Each one can be adapted out for a different environment, such as a storybook
--- plugin like UI Labs, or another platform like Vortex.
+ink.mount(target, source, render_ui) -> (render, destroy)
+```
 
-const scope = ink.scope.new()
+- `target` is a `GuiObject` that Ink renders into.
+- `source` is where input comes from, usually `UserInputService`.
+- `render_ui(scope, bounds)` returns your composite. `bounds` is the size of
+  `target`.
 
--- The intent listens to an input source (here, UserInputService) and needs
--- to know where your UI is on screen.
---
--- This callback converts a screen position into a position relative to `root`.
-const intent = ink.roblox_intent.new(UserInputService, function(position)
-	return position - root.AbsolutePosition
+It returns a `render(dt)` function to call every frame, and `destroy()`.
+
+```luau
+const screen = Instance.new("ScreenGui")
+screen.Parent = Players.LocalPlayer.PlayerGui
+
+const root = Instance.new("Frame")
+root.BackgroundTransparency = 1
+root.Size = UDim2.fromScale(1, 1)
+root.Parent = screen
+
+const render, destroy = ink.mount(root, UserInputService, function(s, bounds)
+	return ink.align(hud(s:key("hud")), bounds, ink.ALIGN_MID, ink.ALIGN_END)
 end)
 
-const root = Instance.new("ScreenGui")
-root.Parent = Players.LocalPlayer.PlayerGui
-const renderer = ink.roblox_renderer.new(root)
+const connection = RunService.PreRender:Connect(render)
+```
 
--- Here, Ink is rendered every `PreRender`.
--- You don't have to use RunService! Feel free to render every ECS phase or on
--- `PreSimulation` like a pyschopath.
-const render_loop = RunService.PreRender:Connect(function(dt)
-	-- First, advance time. This brings up state set last frame.
-	scope:next(dt)
+You don't have to use `PreRender`. Call `render` from your ECS, a fixed step,
+or anywhere else.
 
-	-- Then, work out what the player did to the hotspots seen last frame.
-	ink.update_intent_state(intent.state, intent:take())
+To clean up, call the `destroy` callback returned by `mount`:
 
-    -- Now, compose your UI!
-    const composite = render_ui(scope)
+```luau
+connection:Disconnect()
+destroy()
+```
 
-	-- When updating your UI, hotspots may have been rearranged.
-    -- You'll need to "commit" the updated hotspots to your intents.
-	intent:commit(composite)
+## What a frame does
 
-    -- Now, finally, render it!
-    renderer:render_composite(composite)
+`mount` is a small wrapper. If you need something different, build the loop
+yourself from the same parts:
+
+```luau
+const root = ink.scope()
+const view = ink.renderer(target)
+const input = ink.input_collector(UserInputService, function(point)
+	return point - target.AbsolutePosition
 end)
 
--- To clean up Ink:
-plugin.Unloading:Once(function()
-    render_loop:Disconnect()
-    intent:destroy()
-    renderer:destroy()
+RunService.PreRender:Connect(function(dt)
+	root:next(dt)               -- advance time, run cleanups
+	input:advance()             -- work out what happened to last frame's hit regions
+	const composite = render_ui(root, ink.rect_sized(target.AbsoluteSize.X, target.AbsoluteSize.Y))
+	input:commit(composite)     -- register this frame's hit regions
+	view:render(composite)      -- update instances
 end)
 ```
+
+::: tip
+
+The order matters: input is resolved against last frame's hit regions, then this
+frame's are committed after your UI runs.
+
+:::

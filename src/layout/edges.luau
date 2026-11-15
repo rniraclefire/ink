@@ -28,6 +28,14 @@ function edges.xy(amount_x: number, amount_y: number)
 	return edges.new(amount_y, amount_x, amount_y, amount_x)
 end
 
+function edges.horizontal(amount: number)
+	return edges.new(0, amount, 0, amount)
+end
+
+function edges.vertical(amount: number)
+	return edges.new(amount, 0, amount, 0)
+end
+
 function edges.zero()
 	return edges.new()
 end
