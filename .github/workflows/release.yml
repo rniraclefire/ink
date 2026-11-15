@@ -40,16 +40,11 @@ jobs:
       - name: Build
         run: rojo build package.project.json -o ink.rbxm
 
-      - name: Release notes
-        run: |
-          awk -v v="## ${GITHUB_REF_NAME#v}" '$0 ~ "^"v {f=1; next} /^## / && f {exit} f' CHANGELOG.md > notes.md
-          test -s notes.md || { echo "no CHANGELOG entry for this version"; exit 1; }
-
       - name: GitHub release
         uses: softprops/action-gh-release@v2
         with:
           files: ink.rbxm
-          body_path: notes.md
+          body_path: CHANGELOG.md
           prerelease: ${{ contains(github.ref_name, '-') }}
 
       - name: Publish to Ember
