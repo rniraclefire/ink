@@ -93,7 +93,7 @@ const PRIMITIVE_RENDERERS: { [types.PrimitiveKind]: PrimitiveRenderer } = {
 			const style = primitive.image_style :: types.ImageStyle or DEFAULT_IMAGE_STYLE
 			write(pool, "Image", primitive.image)
 			write(pool, "ImageColor3", primitive.color)
-			write(pool, "ImageTransparency", primitive.transparency)
+			write(pool, "ImageTransparency", primitive.transparency or 0)
 			write(pool, "ScaleType", style.scale_type or Enum.ScaleType.Stretch)
 			write(pool, "SliceCenter", style.slice_center or ZERO_RECT)
 			write(pool, "SliceScale", style.slice_scale or 1)
