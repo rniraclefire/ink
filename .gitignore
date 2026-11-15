@@ -2,3 +2,5 @@ packages/
 .ember-patch/
 .DS_Store
 /.lest
+
+src_old

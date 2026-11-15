@@ -1,21 +1,30 @@
-const compat = require("../compat")
-const Rect = compat.Rect
+const bounds = require("../core/bounds")
+const composites = require("../core/composites")
+const primitives = require("../core/primitives")
 
-const types = require("../types")
-const union_rects = require("../rects/union_rects")
+const function compose(...: composites.Compositable?): composites.Composite
+	const composite_primitives: { primitives.Primitive } = {}
+	local composite_bounds: bounds.Bounds
 
---- Combines composites into one. Composites are rendered in order, so later composites draw on top.
-const function compose(cs: { types.Composite }, bounded_by: Rect?): types.Composite
-	local out_primitives: { types.Primitive } = {}
-	local out_bounds: Rect?
-	for _, c in cs do
-		table.move(c.primitives, 1, #c.primitives, #out_primitives + 1, out_primitives)
-		out_bounds = union_rects(out_bounds, c.bounds)
+	for index = 1, select("#", ...) do
+		const composite = select(index, ...)
+		if not composite then
+			continue
+		end
+
+		for _, primitive in composites.iter_primitives(composite) do
+			table.insert(composite_primitives, primitive)
+		end
+
+		composite_bounds = if composite_bounds
+			then bounds.union(composite_bounds, composite.bounds)
+			else composite.bounds
 	end
-	return {
-		primitives = out_primitives,
-		bounds = bounded_by or out_bounds or Rect.new(),
-	}
+
+	return table.freeze({
+		primitives = table.freeze(composite_primitives),
+		bounds = composite_bounds,
+	})
 end
 
 return compose

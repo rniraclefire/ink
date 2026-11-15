@@ -1,0 +1,6 @@
+{
+	"luau-lsp.fflags.override": {
+		"LuauExportValueSyntax": "true",
+		"LuauExportValueTypecheck": "true"
+	}
+}
